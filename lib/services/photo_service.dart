@@ -55,6 +55,17 @@ class PhotoService {
         .toList();
   }
 
+  /// Fetch single photo detail with complete EXIF and ownership flag
+  Future<PhotoModel> getPhotoDetail(dynamic photoId) async {
+    final response = await apiService.get(
+      AppConstants.photoDetail(photoId),
+      auth: true,
+    );
+
+    final data = response['data'] as Map<String, dynamic>;
+    return PhotoModel.fromJson(data);
+  }
+
   /// Toggle like status on a photo.
   Future<Map<String, dynamic>> toggleLike(dynamic photoId) async {
     final response = await apiService.post(

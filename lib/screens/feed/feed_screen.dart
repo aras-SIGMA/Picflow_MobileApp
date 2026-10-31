@@ -6,6 +6,7 @@ import '../../utils/app_colors.dart';
 import '../../utils/app_typography.dart';
 import '../../widgets/category_pill_list.dart';
 import '../../widgets/photo_card.dart';
+import '../photo_detail/photo_detail_screen.dart';
 
 class FeedScreen extends ConsumerWidget {
   const FeedScreen({super.key});
@@ -195,13 +196,13 @@ class FeedScreen extends ConsumerWidget {
           return PhotoCard(
             photo: photo,
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Detail Foto "${photo.title}" siap di Sprint 4.',
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PhotoDetailScreen(
+                    photoId: photo.idPhoto,
+                    initialPhoto: photo,
                   ),
-                  duration: const Duration(seconds: 1),
-                  behavior: SnackBarBehavior.floating,
                 ),
               );
             },
