@@ -36,15 +36,16 @@
   2. Android configuration:
      - Add `INTERNET`, `CAMERA`, and image read permissions to `AndroidManifest.xml`.
      - Enable `android:usesCleartextTraffic="true"` for debug HTTP access to local backend.
-  3. Design Tokens & Theme implementation:
+  3. Design Tokens & Theme implementation (under `lib/utils/`):
      - `AppColors` (Canvas `#FFFDF6`, Elevated Card `#F8F3E8`, Border `#E8DEC9`, Primary Blue `#2563EB`, Stone Inks, sRGB highlights).
      - `AppTypography` using GoogleFonts (Plus Jakarta Sans / Inter).
      - `AppTheme` configuring theme data, input decorations, and button styles.
-  4. Lightweight Network Layer (`ApiClient`):
+     - `AppConstants` (`constants.dart`) for API endpoints and base URL.
+  4. Lightweight Network Layer (`ApiService` under `lib/services/`):
      - Wrapper around `http.Client`.
      - Automated headers: `Content-Type: application/json` and `Authorization: Bearer <token>`.
      - Custom `ApiException` with friendly network error messages for local `adb reverse` troubleshooting.
-  5. `TokenStorage`:
+  5. `StorageService` (under `lib/services/`):
      - Secure token persistence using `FlutterSecureStorage`.
 - **Verification**: `flutter analyze` passes with 0 issues; placeholder app boots with warm cream canvas theme.
 
@@ -117,7 +118,7 @@
   3. Presentation Screen:
      - `UploadPhotoScreen`: Selected image frame, Title input (required), Category dropdown (required), Description input (optional).
   4. Multipart Request:
-     - `ApiClient.uploadPhoto()` executing multipart form upload to `POST /api/photos`.
+     - `ApiService.multipart()` executing multipart form upload to `POST /api/photos`.
   5. Completion Flow:
      - Success feedback, automatic feed invalidation/refresh, and navigation back to Feed.
 - **Verification**: Capturing/picking an image and uploading it succeeds, and the new photo appears in the feed.
@@ -149,6 +150,7 @@
   1. End-to-End manual testing on physical Android device connected via USB (`adb reverse tcp:8000 tcp:8000`).
   2. Network connection failure handler with diagnostic tip (*"Pastikan server aktif dan jalankan 'adb reverse tcp:8000 tcp:8000'"*).
   3. Performance and memory check: Smooth 60 fps scrolling without image memory leaks.
-  4. Run `flutter analyze` across entire project (0 warnings, 0 errors).
-  5. Merge `feature/e2e-polish` into `develop`.
+  4. Network Security & Cleartext Hardening: Isolasi konfigurasi `android:usesCleartextTraffic="true"` khusus untuk mode debug (via `res/xml/network_security_config.xml` atau build flavor) agar rilis release production tetap aman dan mewajibkan HTTPS.
+  5. Run `flutter analyze` across entire project (0 warnings, 0 errors).
+  6. Merge `feature/e2e-polish` into `develop`.
 - **Verification**: Fully functional, polished MVP Android build ready for testing and demo.
