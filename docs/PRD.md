@@ -104,30 +104,16 @@ PicFlow Mobile menghadirkan aplikasi native Android berbasis Flutter dengan tema
 ## 4. Technical Specifications
 
 ### 4.1 Architecture Overview
-Aplikasi menggunakan **Clean Layered Architecture** dengan **Flutter Riverpod** sebagai state management tunggal:
+Aplikasi menggunakan arsitektur **Layer-First (Sederhana & Mudah Dikelola)** dengan **Flutter Riverpod** sebagai state management:
 
 ```
 lib/
-├── core/
-│   ├── constants/       # api_constants.dart, app_colors.dart, asset_paths.dart
-│   ├── network/         # dio_client.dart, auth_interceptor.dart, error_handler.dart
-│   ├── storage/         # token_storage.dart (SecureStorage wrapper)
-│   └── theme/           # app_theme.dart, typography, visual tokens
-├── data/
-│   ├── models/          # user_model.dart, photo_model.dart, category_model.dart
-│   └── repositories/    # auth_repo.dart, photo_repo.dart, category_repo.dart
-├── state/
-│   ├── auth_state.dart         # AuthNotifier, Session state
-│   ├── feed_state.dart         # FeedNotifier, Category selection
-│   ├── photo_detail_state.dart # Single photo detail loader
-│   └── upload_state.dart       # Form submission & upload progress
-├── presentation/
-│   ├── auth/            # login_screen.dart, register_screen.dart
-│   ├── home/            # feed_screen.dart, widgets/photo_card.dart
-│   ├── photo_detail/    # detail_screen.dart, widgets/exif_panel.dart
-│   ├── upload/          # upload_photo_screen.dart
-│   ├── profile/         # profile_screen.dart, widgets/portfolio_grid.dart
-│   └── widgets/         # app_button.dart, app_text_field.dart, custom_app_bar.dart
+├── models/          # user_model.dart, photo_model.dart, category_model.dart
+├── screens/         # login_screen.dart, feed_screen.dart, detail_screen.dart, upload_screen.dart, profile_screen.dart
+├── widgets/         # photo_card.dart, exif_panel.dart, custom_button.dart, custom_text_field.dart
+├── providers/       # auth_provider.dart, feed_provider.dart, photo_detail_provider.dart, upload_provider.dart
+├── services/        # api_service.dart (http wrapper), api_exception.dart, storage_service.dart (secure storage)
+├── utils/           # app_colors.dart, app_typography.dart, app_theme.dart, constants.dart
 └── main.dart
 ```
 
@@ -175,6 +161,6 @@ Mengadopsi identitas visual resmi PicFlow (*Modern Fluid Editorial*):
 
 ### 5.2 Technical Risks & Mitigation
 1. **Risiko Koneksi USB HP ke Laptop**: Port 8000 tidak terhubung jika developer lupa menjalankan `adb reverse`.  
-   *Mitigasi*: Buat interceptor error Dio dengan pesan human-readable: *"Gagal terhubung ke backend. Pastikan server aktif dan jalankan 'adb reverse tcp:8000 tcp:8000'"*.
+   *Mitigasi*: Buat exception handler di `ApiService` dengan pesan human-readable: *"Gagal terhubung ke backend. Pastikan server aktif dan jalankan 'adb reverse tcp:8000 tcp:8000'"*.
 2. **Risiko Memori Gambar Besar (OOM)**: Kamera HP modern menghasilkan foto 10-50MB.  
    *Mitigasi*: Manfaatkan URL transformasi Cloudinary (`thumbnail_url` dan `medium_url`) untuk feed; batasi decoding resolusi pada widget image.
