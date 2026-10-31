@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+
 import '../utils/app_colors.dart';
 import '../utils/app_typography.dart';
 
-enum ButtonVariant {
-  primary,
-  outline,
-}
+enum ButtonVariant { primary, outline }
 
 class CustomButton extends StatelessWidget {
   final String text;

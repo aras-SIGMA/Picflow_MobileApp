@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../utils/app_colors.dart';
 import '../utils/app_typography.dart';
 
@@ -69,7 +70,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
             suffixIcon: widget.isPassword
                 ? IconButton(
                     icon: Icon(
-                      _obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                      _obscured
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
                       color: AppColors.textMuted,
                       size: 20,
                     ),

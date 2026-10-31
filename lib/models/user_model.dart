@@ -29,7 +29,8 @@ class UserModel {
       role: (json['role'] ?? 'user').toString(),
       fullName: json['full_name'] as String?,
       bio: json['bio'] as String?,
-      profilePictureUrl: (json['profile_picture_url'] ?? json['avatar_url']) as String?,
+      profilePictureUrl:
+          (json['profile_picture_url'] ?? json['avatar_url']) as String?,
       createdAt: json['created_at'] as String?,
     );
   }
@@ -75,11 +76,7 @@ class AuthResponse {
   final String? token;
   final String? refreshToken;
 
-  const AuthResponse({
-    required this.user,
-    this.token,
-    this.refreshToken,
-  });
+  const AuthResponse({required this.user, this.token, this.refreshToken});
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) {
     return AuthResponse(

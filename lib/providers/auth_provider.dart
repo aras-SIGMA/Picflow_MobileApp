@@ -1,29 +1,21 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/user_model.dart';
 import '../services/api_exception.dart';
 import '../services/auth_service.dart';
 
-enum AuthStatus {
-  initial,
-  loading,
-  authenticated,
-  unauthenticated,
-  error,
-}
+enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
 
 class AuthState {
   final AuthStatus status;
   final UserModel? user;
   final String? errorMessage;
 
-  const AuthState({
-    required this.status,
-    this.user,
-    this.errorMessage,
-  });
+  const AuthState({required this.status, this.user, this.errorMessage});
 
   bool get isLoading => status == AuthStatus.loading;
-  bool get isAuthenticated => status == AuthStatus.authenticated && user != null;
+  bool get isAuthenticated =>
+      status == AuthStatus.authenticated && user != null;
 
   factory AuthState.initial() => const AuthState(status: AuthStatus.initial);
 
@@ -70,21 +62,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
       state = state.copyWith(
         status: AuthStatus.unauthenticated,
         user: null,
-        errorMessage: e.message,
+        errorMessage: null, // Silent on cold start so login screen opens clean
       );
-    } catch (e) {
+    } catch (_) {
       state = state.copyWith(
         status: AuthStatus.unauthenticated,
         user: null,
-        errorMessage: e.toString(),
+        errorMessage: null, // Silent on cold start
       );
     }
   }
 
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
     try {
       final user = await _authService.login(email: email, password: password);

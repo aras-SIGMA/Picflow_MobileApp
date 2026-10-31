@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../providers/auth_provider.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_typography.dart';
@@ -39,12 +40,28 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
 
     try {
-      await ref.read(authProvider.notifier).register(
+      await ref
+          .read(authProvider.notifier)
+          .register(
             username: _usernameController.text.trim(),
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
       if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Registrasi berhasil! Selamat datang di PicFlow.',
+              style: AppTypography.caption.copyWith(color: Colors.white),
+            ),
+            backgroundColor: AppColors.success,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
         Navigator.pop(context);
       }
     } catch (e) {
@@ -128,10 +145,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Create Account',
-                            style: AppTypography.heading,
-                          ),
+                          Text('Create Account', style: AppTypography.heading),
                           const SizedBox(height: 4),
                           Text(
                             'Showcase your vision with true sRGB color fidelity.',
@@ -139,7 +153,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           ),
                           const SizedBox(height: 20),
 
-                          if (displayedError != null && displayedError.isNotEmpty) ...[
+                          if (displayedError != null &&
+                              displayedError.isNotEmpty) ...[
                             ErrorBanner(
                               message: displayedError,
                               onDismiss: () {
@@ -167,7 +182,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               if (val.trim().length < 3) {
                                 return 'Username minimal 3 karakter';
                               }
-                              if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(val.trim())) {
+                              if (!RegExp(r'^[a-zA-Z0-9_]+$')
+                                  .hasMatch(val.trim())) {
                                 return 'Hanya boleh huruf, angka, dan underscore (_)';
                               }
                               return null;

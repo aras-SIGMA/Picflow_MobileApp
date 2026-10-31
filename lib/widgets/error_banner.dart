@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../utils/app_colors.dart';
 import '../utils/app_typography.dart';
 
@@ -6,11 +7,7 @@ class ErrorBanner extends StatelessWidget {
   final String message;
   final VoidCallback? onDismiss;
 
-  const ErrorBanner({
-    super.key,
-    required this.message,
-    this.onDismiss,
-  });
+  const ErrorBanner({super.key, required this.message, this.onDismiss});
 
   @override
   Widget build(BuildContext context) {

@@ -37,9 +37,13 @@
 
 ### 1.5 Layar Aplikasi (`lib/screens/` & `lib/main.dart`)
 - **`LoginScreen`** (`lib/screens/auth/login_screen.dart`): Form login dengan tombol **"Quick Demo Account"** (`guest@picflow.studio`) untuk mempercepat pengujian.
-- **`RegisterScreen`** (`lib/screens/auth/register_screen.dart`): Form pendaftaran akun baru dengan validasi username ($\ge 3$ huruf/angka) dan password ($\ge 6$ karakter).
+- **`RegisterScreen`** (`lib/screens/auth/register_screen.dart`): Form pendaftaran akun baru dengan validasi username ($\ge 3$ huruf/angka), password ($\ge 6$ karakter), dan umpan balik `SnackBar` hijau setelah registrasi sukses.
 - **`HomeScreen`** (`lib/screens/home/home_screen.dart`): Layar profil kreator terautentikasi (avatar, username, email, badge status role, konfirmasi sesi aktif, dan tombol Logout).
 - **`AuthGate`** (`lib/main.dart`): Entry point dinamis yang mengarahkan pengguna secara otomatis ke `SplashScreen`, `HomeScreen`, atau `LoginScreen` berdasarkan status autentikasi.
+
+### 1.6 Penyempurnaan Hasil Code Review
+- **Supresi Error Cold Start**: Menghilangkan banner error unauthenticated pada startup aplikasi (`errorMessage: null`), sehingga layar login tampil bersih tanpa peringatan palsu saat membuka aplikasi.
+- **Feedback Registrasi**: Menyediakan notifikasi visual `SnackBar` terapung (*floating*) konfirmasi keberhasilan registrasi.
 
 ---
 

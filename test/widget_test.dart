@@ -4,8 +4,9 @@ import 'package:picflow_mobile/main.dart';
 import 'package:picflow_mobile/providers/auth_provider.dart';
 
 void main() {
-  testWidgets('PicFlow auth gate renders login screen when unauthenticated',
-      (WidgetTester tester) async {
+  testWidgets('PicFlow auth gate renders login screen when unauthenticated', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -29,7 +30,8 @@ void main() {
   });
 }
 
-class FakeAuthNotifier extends StateNotifier<AuthState> implements AuthNotifier {
+class FakeAuthNotifier extends StateNotifier<AuthState>
+    implements AuthNotifier {
   FakeAuthNotifier(super.state);
 
   @override

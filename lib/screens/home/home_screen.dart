@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../providers/auth_provider.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_typography.dart';
@@ -21,7 +22,9 @@ class HomeScreen extends ConsumerWidget {
           children: [
             Text(
               'Pic',
-              style: AppTypography.heading.copyWith(fontWeight: FontWeight.w800),
+              style: AppTypography.heading.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
             ),
             ShaderMask(
               shaderCallback: (bounds) => const LinearGradient(
@@ -74,7 +77,8 @@ class HomeScreen extends ConsumerWidget {
                             color: AppColors.surfaceBorder,
                             width: 1.5,
                           ),
-                          image: user?.profilePictureUrl != null &&
+                          image:
+                              user?.profilePictureUrl != null &&
                                   user!.profilePictureUrl!.isNotEmpty
                               ? DecorationImage(
                                   image: NetworkImage(
@@ -86,7 +90,8 @@ class HomeScreen extends ConsumerWidget {
                                 )
                               : null,
                         ),
-                        child: user?.profilePictureUrl == null ||
+                        child:
+                            user?.profilePictureUrl == null ||
                                 user!.profilePictureUrl!.isEmpty
                             ? const Icon(
                                 Icons.person_outline_rounded,
@@ -101,10 +106,7 @@ class HomeScreen extends ConsumerWidget {
                         style: AppTypography.heading,
                       ),
                       const SizedBox(height: 2),
-                      Text(
-                        user?.email ?? '',
-                        style: AppTypography.caption,
-                      ),
+                      Text(user?.email ?? '', style: AppTypography.caption),
                       const SizedBox(height: 10),
 
                       // Role Badge
@@ -126,7 +128,9 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         ),
                         child: Text(
-                          user?.isAdmin == true ? 'ADMIN CURATOR' : 'PHOTOGRAPHER',
+                          user?.isAdmin == true
+                              ? 'ADMIN CURATOR'
+                              : 'PHOTOGRAPHER',
                           style: AppTypography.metadata.copyWith(
                             color: user?.isAdmin == true
                                 ? const Color(0xFF92400E)
@@ -157,10 +161,7 @@ class HomeScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFFECFDF5),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color(0xFFA7F3D0),
-                    width: 1,
-                  ),
+                  border: Border.all(color: const Color(0xFFA7F3D0), width: 1),
                 ),
                 child: Row(
                   children: [

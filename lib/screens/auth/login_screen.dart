@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../providers/auth_provider.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_typography.dart';
@@ -46,7 +47,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     try {
-      await ref.read(authProvider.notifier).login(
+      await ref
+          .read(authProvider.notifier)
+          .login(
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
@@ -126,10 +129,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Welcome Back',
-                            style: AppTypography.heading,
-                          ),
+                          Text('Welcome Back', style: AppTypography.heading),
                           const SizedBox(height: 4),
                           Text(
                             'Sign in to explore high-res works & gear EXIF.',
@@ -137,7 +137,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           const SizedBox(height: 20),
 
-                          if (displayedError != null && displayedError.isNotEmpty) ...[
+                          if (displayedError != null &&
+                              displayedError.isNotEmpty) ...[
                             ErrorBanner(
                               message: displayedError,
                               onDismiss: () {
