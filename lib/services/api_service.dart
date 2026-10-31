@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+
 import '../utils/constants.dart';
 import 'api_exception.dart';
 import 'storage_service.dart';
@@ -17,10 +19,8 @@ class ApiService {
   final http.Client _client;
   final StorageService storageService;
 
-  ApiService({
-    http.Client? client,
-    required this.storageService,
-  }) : _client = client ?? http.Client();
+  ApiService({http.Client? client, required this.storageService})
+    : _client = client ?? http.Client();
 
   Uri _buildUri(String path, [Map<String, dynamic>? queryParameters]) {
     final cleanBase = AppConstants.baseUrl.endsWith('/')
@@ -102,9 +102,9 @@ class ApiService {
     try {
       final uri = _buildUri(path, queryParameters);
       final headers = await _buildHeaders(auth: auth);
-      final response = await _client.get(uri, headers: headers).timeout(
-            const Duration(seconds: 15),
-          );
+      final response = await _client
+          .get(uri, headers: headers)
+          .timeout(const Duration(seconds: 15));
       return _processResponse(response);
     } on SocketException catch (e) {
       throw NetworkConnectionException(e.message);
@@ -115,11 +115,7 @@ class ApiService {
     }
   }
 
-  Future<dynamic> post(
-    String path, {
-    dynamic body,
-    bool auth = true,
-  }) async {
+  Future<dynamic> post(String path, {dynamic body, bool auth = true}) async {
     try {
       final uri = _buildUri(path);
       final headers = await _buildHeaders(auth: auth);
@@ -137,11 +133,7 @@ class ApiService {
     }
   }
 
-  Future<dynamic> put(
-    String path, {
-    dynamic body,
-    bool auth = true,
-  }) async {
+  Future<dynamic> put(String path, {dynamic body, bool auth = true}) async {
     try {
       final uri = _buildUri(path);
       final headers = await _buildHeaders(auth: auth);
@@ -159,11 +151,7 @@ class ApiService {
     }
   }
 
-  Future<dynamic> delete(
-    String path, {
-    dynamic body,
-    bool auth = true,
-  }) async {
+  Future<dynamic> delete(String path, {dynamic body, bool auth = true}) async {
     try {
       final uri = _buildUri(path);
       final headers = await _buildHeaders(auth: auth);
@@ -202,9 +190,9 @@ class ApiService {
         request.files.addAll(files);
       }
 
-      final streamedResponse = await _client.send(request).timeout(
-            const Duration(seconds: 60),
-          );
+      final streamedResponse = await _client
+          .send(request)
+          .timeout(const Duration(seconds: 60));
       final response = await http.Response.fromStream(streamedResponse);
       return _processResponse(response);
     } on SocketException catch (e) {

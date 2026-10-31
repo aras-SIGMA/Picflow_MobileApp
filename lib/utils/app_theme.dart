@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'app_colors.dart';
 import 'app_typography.dart';
 
@@ -71,24 +72,35 @@ class AppTheme {
           foregroundColor: AppColors.primary,
           textStyle: AppTypography.button.copyWith(color: AppColors.primary),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surfaceElevated,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        hintStyle: AppTypography.bodyRegular.copyWith(color: AppColors.textFaint),
-        labelStyle: AppTypography.bodyRegular.copyWith(color: AppColors.textMuted),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
+        hintStyle: AppTypography.bodyRegular.copyWith(
+          color: AppColors.textFaint,
+        ),
+        labelStyle: AppTypography.bodyRegular.copyWith(
+          color: AppColors.textMuted,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.surfaceBorder, width: 1),
+          borderSide: const BorderSide(
+            color: AppColors.surfaceBorder,
+            width: 1,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.surfaceBorder, width: 1),
+          borderSide: const BorderSide(
+            color: AppColors.surfaceBorder,
+            width: 1,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),

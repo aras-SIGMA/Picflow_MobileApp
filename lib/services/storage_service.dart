@@ -11,10 +11,11 @@ class StorageService {
   static const String _tokenKey = 'picflow_jwt_token';
 
   StorageService({FlutterSecureStorage? storage})
-      : _storage = storage ??
-            const FlutterSecureStorage(
-              aOptions: AndroidOptions(encryptedSharedPreferences: true),
-            );
+    : _storage =
+          storage ??
+          const FlutterSecureStorage(
+            aOptions: AndroidOptions(encryptedSharedPreferences: true),
+          );
 
   Future<void> saveToken(String token) async {
     await _storage.write(key: _tokenKey, value: token);
