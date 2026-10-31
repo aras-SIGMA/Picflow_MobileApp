@@ -49,6 +49,7 @@ class PhotoModel {
   final int likesCount;
   final int commentsCount;
   final bool isLiked;
+  final bool isOwner;
   final PhotoCreator? creator;
 
   const PhotoModel({
@@ -78,6 +79,7 @@ class PhotoModel {
     this.likesCount = 0,
     this.commentsCount = 0,
     this.isLiked = false,
+    this.isOwner = false,
     this.creator,
   });
 
@@ -96,6 +98,48 @@ class PhotoModel {
       parts.add(shutterSpeed!);
     }
     return parts.isEmpty ? 'sRGB Capture' : parts.join(' • ');
+  }
+
+  /// Formatted date string for shot taken timestamp (e.g., "12 Mar 2024, 14:30").
+  String get formattedTakenAt {
+    if (takenAt == null || takenAt!.trim().isEmpty) return 'N/A';
+    try {
+      final date = DateTime.parse(takenAt!);
+      final months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
+      final day = date.day.toString().padLeft(2, '0');
+      final month = months[date.month - 1];
+      final year = date.year;
+      final hour = date.hour.toString().padLeft(2, '0');
+      final min = date.minute.toString().padLeft(2, '0');
+      return '$day $month $year, $hour:$min';
+    } catch (_) {
+      return takenAt!;
+    }
+  }
+
+  /// Check whether photo contains any optical EXIF parameter.
+  bool get hasAnyExif {
+    return (cameraMake != null && cameraMake!.isNotEmpty) ||
+        (cameraModel != null && cameraModel!.isNotEmpty) ||
+        (lens != null && lens!.isNotEmpty) ||
+        (focalLength != null && focalLength!.isNotEmpty) ||
+        (aperture != null && aperture!.isNotEmpty) ||
+        (shutterSpeed != null && shutterSpeed!.isNotEmpty) ||
+        (iso != null && iso!.isNotEmpty) ||
+        (takenAt != null && takenAt!.isNotEmpty);
   }
 
   factory PhotoModel.fromJson(Map<String, dynamic> json) {
@@ -163,6 +207,7 @@ class PhotoModel {
           ? json['comments_count'] as int
           : int.tryParse(json['comments_count']?.toString() ?? '0') ?? 0,
       isLiked: json['is_liked'] == true,
+      isOwner: json['is_owner'] == true,
       creator: creatorObj,
     );
   }
@@ -195,6 +240,7 @@ class PhotoModel {
       'likes_count': likesCount,
       'comments_count': commentsCount,
       'is_liked': isLiked,
+      'is_owner': isOwner,
       'creator': creator?.toJson(),
     };
   }
@@ -226,6 +272,7 @@ class PhotoModel {
     int? likesCount,
     int? commentsCount,
     bool? isLiked,
+    bool? isOwner,
     PhotoCreator? creator,
   }) {
     return PhotoModel(
@@ -255,6 +302,7 @@ class PhotoModel {
       likesCount: likesCount ?? this.likesCount,
       commentsCount: commentsCount ?? this.commentsCount,
       isLiked: isLiked ?? this.isLiked,
+      isOwner: isOwner ?? this.isOwner,
       creator: creator ?? this.creator,
     );
   }
