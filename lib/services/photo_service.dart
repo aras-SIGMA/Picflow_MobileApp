@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/category_model.dart';
 import '../models/photo_model.dart';
@@ -73,5 +76,38 @@ class PhotoService {
       auth: true,
     );
     return response['data'] as Map<String, dynamic>? ?? {};
+  }
+
+  /// Upload a new photo with image file, title, category ID, and optional description.
+  Future<PhotoModel> uploadPhoto({
+    required File imageFile,
+    required String title,
+    required int categoryId,
+    String? description,
+  }) async {
+    final multipartFile = await http.MultipartFile.fromPath(
+      'image',
+      imageFile.path,
+    );
+
+    final fields = <String, String>{
+      'title': title.trim(),
+      'id_category': categoryId.toString(),
+    };
+
+    if (description != null && description.trim().isNotEmpty) {
+      fields['description'] = description.trim();
+    }
+
+    final response = await apiService.multipart(
+      AppConstants.photos,
+      method: 'POST',
+      fields: fields,
+      files: [multipartFile],
+      auth: true,
+    );
+
+    final data = response['data'] as Map<String, dynamic>;
+    return PhotoModel.fromJson(data);
   }
 }

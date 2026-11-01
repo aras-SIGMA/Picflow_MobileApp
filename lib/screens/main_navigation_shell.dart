@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../utils/app_colors.dart';
-import '../utils/app_typography.dart';
 import 'feed/feed_screen.dart';
 import 'home/home_screen.dart';
+import 'upload/upload_photo_screen.dart';
 
 class MainNavigationShell extends StatefulWidget {
   const MainNavigationShell({super.key});
@@ -15,10 +15,16 @@ class MainNavigationShell extends StatefulWidget {
 class _MainNavigationShellState extends State<MainNavigationShell> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = const [
-    FeedScreen(),
-    _UploadPlaceholderScreen(),
-    HomeScreen(),
+  late final List<Widget> _screens = [
+    const FeedScreen(),
+    UploadPhotoScreen(
+      onUploadSuccess: () {
+        setState(() {
+          _currentIndex = 0;
+        });
+      },
+    ),
+    const HomeScreen(),
   ];
 
   @override
@@ -56,59 +62,6 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
               label: 'Profile',
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _UploadPlaceholderScreen extends StatelessWidget {
-  const _UploadPlaceholderScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Studio Kurasi', style: AppTypography.subheading),
-      ),
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: const BoxDecoration(
-                        color: AppColors.surfaceSubtle,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.add_a_photo_outlined,
-                        color: AppColors.primary,
-                        size: 28,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text('Unggah Karya Foto', style: AppTypography.heading),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Fitur kurasi studio, kamera/galeri picker, dan ekstraksi otomatis EXIF akan diimplementasikan pada Sprint 5.',
-                      textAlign: TextAlign.center,
-                      style: AppTypography.bodyRegular.copyWith(
-                        color: AppColors.textMuted,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
         ),
       ),
     );
