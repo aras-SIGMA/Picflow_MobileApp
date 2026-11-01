@@ -110,4 +110,37 @@ class PhotoService {
     final data = response['data'] as Map<String, dynamic>;
     return PhotoModel.fromJson(data);
   }
+
+  /// Fetch all photos uploaded by the authenticated creator
+  Future<List<PhotoModel>> getUserPhotos() async {
+    return getPhotos(feed: 'my');
+  }
+
+  /// Update photo metadata (title, category ID, optional description)
+  Future<PhotoModel> updatePhoto({
+    required dynamic photoId,
+    required String title,
+    required int categoryId,
+    String? description,
+  }) async {
+    final payload = <String, dynamic>{
+      'title': title.trim(),
+      'id_category': categoryId,
+      'description': description?.trim() ?? '',
+    };
+
+    final response = await apiService.put(
+      AppConstants.photoDetail(photoId),
+      body: payload,
+      auth: true,
+    );
+
+    final data = response['data'] as Map<String, dynamic>;
+    return PhotoModel.fromJson(data);
+  }
+
+  /// Delete a photo by ID
+  Future<void> deletePhoto(dynamic photoId) async {
+    await apiService.delete(AppConstants.photoDetail(photoId), auth: true);
+  }
 }

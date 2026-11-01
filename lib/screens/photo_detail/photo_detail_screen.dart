@@ -5,13 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/photo_model.dart';
 import '../../providers/photo_detail_provider.dart';
+import '../../providers/profile_provider.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_typography.dart';
 import '../../utils/constants.dart';
+import '../../widgets/edit_photo_sheet.dart';
 import '../../widgets/exif_metadata_panel.dart';
 
 class PhotoDetailScreen extends ConsumerStatefulWidget {
-  final int photoId;
+  final dynamic photoId;
   final PhotoModel? initialPhoto;
 
   const PhotoDetailScreen({
@@ -58,6 +60,59 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
     );
   }
 
+  void _confirmDelete(PhotoModel photo) {
+    final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.delete_forever_rounded, color: AppColors.danger),
+            const SizedBox(width: 8),
+            Text('Hapus Karya Foto', style: AppTypography.subheading),
+          ],
+        ),
+        content: Text(
+          'Apakah Anda yakin ingin menghapus "${photo.title}"? Tindakan ini bersifat permanen.',
+          style: AppTypography.bodyRegular,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              'Batal',
+              style: AppTypography.button.copyWith(color: AppColors.textMuted),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.danger,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              final success = await ref
+                  .read(profileProvider.notifier)
+                  .deletePhoto(photo.idPhoto);
+              if (success && mounted) {
+                navigator.pop();
+                messenger.showSnackBar(
+                  const SnackBar(
+                    content: Text('Karya foto berhasil dihapus.'),
+                    backgroundColor: AppColors.textMain,
+                  ),
+                );
+              }
+            },
+            child: const Text('Hapus'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final detailState = ref.watch(photoDetailProvider(widget.photoId));
@@ -81,6 +136,65 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
               icon: const Icon(Icons.share_outlined, size: 20),
               tooltip: 'Bagikan Metadata',
               onPressed: () => _copyShareDetails(photo),
+            ),
+          if (photo != null && photo.isOwner)
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert_rounded, size: 20),
+              color: AppColors.canvas,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: const BorderSide(color: AppColors.surfaceBorder),
+              ),
+              onSelected: (val) {
+                if (val == 'edit') {
+                  EditPhotoSheet.show(
+                    context,
+                    photo: photo,
+                    onSaved: () {
+                      ref
+                          .read(photoDetailProvider(widget.photoId).notifier)
+                          .fetchDetail();
+                    },
+                  );
+                } else if (val == 'delete') {
+                  _confirmDelete(photo);
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'edit',
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.edit_outlined,
+                        size: 18,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text('Edit Metadata', style: AppTypography.bodyRegular),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.delete_outline,
+                        size: 18,
+                        color: AppColors.danger,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Hapus Foto',
+                        style: AppTypography.bodyRegular.copyWith(
+                          color: AppColors.danger,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
         ],
       ),
