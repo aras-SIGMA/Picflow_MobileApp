@@ -9,6 +9,7 @@ import 'package:picflow_mobile/providers/auth_provider.dart';
 import 'package:picflow_mobile/providers/categories_provider.dart';
 import 'package:picflow_mobile/providers/feed_provider.dart';
 import 'package:picflow_mobile/screens/photo_detail/photo_detail_screen.dart';
+import 'package:picflow_mobile/screens/upload/upload_photo_screen.dart';
 import 'package:picflow_mobile/widgets/exif_metadata_panel.dart';
 
 void main() {
@@ -186,6 +187,109 @@ void main() {
     expect(find.text('2'), findsOneWidget);
     expect(find.text('Pinch to zoom (up to 4x)'), findsOneWidget);
   });
+
+  testWidgets(
+    'UploadPhotoScreen renders curation studio form and picker trigger',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            categoriesProvider.overrideWith(
+              (ref) async => [
+                const CategoryModel(idCategory: 1, name: 'Landscape'),
+              ],
+            ),
+          ],
+          child: const MaterialApp(home: UploadPhotoScreen()),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Studio Kurasi'), findsOneWidget);
+      expect(find.text('Sentuh untuk Memilih Foto'), findsOneWidget);
+      expect(find.text('Judul Karya *'), findsOneWidget);
+      expect(find.text('Kategori Fotografi *'), findsOneWidget);
+      expect(find.text('Publikasikan Karya'), findsOneWidget);
+      expect(find.text('Ekstraksi Otomatis EXIF'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'UploadPhotoScreen shows camera and gallery modal when tapping picker container',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            categoriesProvider.overrideWith(
+              (ref) async => [
+                const CategoryModel(idCategory: 1, name: 'Landscape'),
+              ],
+            ),
+          ],
+          child: const MaterialApp(home: UploadPhotoScreen()),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      await tester.tap(find.text('Sentuh untuk Memilih Foto'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Pilih Sumber Foto'), findsOneWidget);
+      expect(find.text('Ambil Foto dari Kamera'), findsOneWidget);
+      expect(find.text('Pilih dari Galeri'), findsOneWidget);
+    },
+  );
+
+  testWidgets('UploadPhotoScreen validates empty title and missing image', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          categoriesProvider.overrideWith(
+            (ref) async => [
+              const CategoryModel(idCategory: 1, name: 'Landscape'),
+            ],
+          ),
+        ],
+        child: const MaterialApp(home: UploadPhotoScreen()),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // Attempt to submit without filling title or picking image
+    final submitButton = find.text('Publikasikan Karya');
+    await tester.ensureVisible(submitButton);
+    await tester.pumpAndSettle();
+    await tester.tap(submitButton);
+    await tester.pumpAndSettle();
+
+    // Form validation for title should trigger
+    expect(find.text('Judul foto wajib diisi'), findsOneWidget);
+  });
+
+  test('PhotoModel.fromJson parses integer ISO and UUID idPhoto safely', () {
+    final payload = {
+      'id_photo': '8195b0c5-ba9d-4ddd-89c3-a4c512b69c30',
+      'id_user': '578f0b0d-9bda-4448-83ca-5883df8b5ebf',
+      'title': 'UI di sore hari',
+      'image_url': 'https://res.cloudinary.com/test.jpg',
+      'iso': 50,
+      'camera_make': 'TECNO',
+      'camera_model': 'TECNO CN5',
+    };
+
+    final photo = PhotoModel.fromJson(payload);
+    expect(photo.idPhoto, '8195b0c5-ba9d-4ddd-89c3-a4c512b69c30');
+    expect(photo.iso, '50');
+    expect(photo.cameraMake, 'TECNO');
+  });
 }
 
 class FakeAuthNotifier extends StateNotifier<AuthState>
@@ -223,5 +327,5 @@ class FakeFeedNotifier extends StateNotifier<FeedState>
   void setFeedTab(String tab) {}
 
   @override
-  Future<void> toggleLike(int photoId) async {}
+  Future<void> toggleLike(dynamic photoId) async {}
 }

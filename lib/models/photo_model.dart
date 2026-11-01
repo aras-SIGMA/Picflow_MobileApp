@@ -23,7 +23,7 @@ class PhotoCreator {
 }
 
 class PhotoModel {
-  final int idPhoto;
+  final dynamic idPhoto;
   final String idUser;
   final int? idCategory;
   final String? categoryName;
@@ -143,12 +143,8 @@ class PhotoModel {
   }
 
   factory PhotoModel.fromJson(Map<String, dynamic> json) {
-    final id = json['id_photo'] is int
-        ? json['id_photo'] as int
-        : int.tryParse(
-                json['id_photo']?.toString() ?? json['id']?.toString() ?? '0',
-              ) ??
-              0;
+    final rawId = json['id_photo'] ?? json['id'] ?? '0';
+    final id = rawId is int ? rawId : (int.tryParse(rawId.toString()) ?? rawId);
 
     final imgUrl = (json['image_url'] ?? '').toString();
     final thumbUrl = (json['thumbnail_url'] ?? imgUrl).toString();
@@ -178,7 +174,7 @@ class PhotoModel {
             ),
       categoryName: json['category_name'] as String?,
       title: (json['title'] ?? 'Untitled').toString(),
-      description: json['description'] as String?,
+      description: json['description']?.toString(),
       imageUrl: imgUrl,
       thumbnailUrl: thumbUrl.isNotEmpty ? thumbUrl : imgUrl,
       mediumUrl: medUrl.isNotEmpty ? medUrl : imgUrl,
@@ -190,16 +186,16 @@ class PhotoModel {
       height: json['height'] is int
           ? json['height'] as int
           : int.tryParse(json['height']?.toString() ?? ''),
-      cameraMake: json['camera_make'] as String?,
-      cameraModel: json['camera_model'] as String?,
-      lens: json['lens'] as String?,
-      focalLength: json['focal_length'] as String?,
-      aperture: json['aperture'] as String?,
-      shutterSpeed: json['shutter_speed'] as String?,
-      iso: json['iso'] as String?,
-      takenAt: json['taken_at'] as String?,
-      createdAt: json['created_at'] as String?,
-      updatedAt: json['updated_at'] as String?,
+      cameraMake: json['camera_make']?.toString(),
+      cameraModel: json['camera_model']?.toString(),
+      lens: json['lens']?.toString(),
+      focalLength: json['focal_length']?.toString(),
+      aperture: json['aperture']?.toString(),
+      shutterSpeed: json['shutter_speed']?.toString(),
+      iso: json['iso']?.toString(),
+      takenAt: json['taken_at']?.toString(),
+      createdAt: json['created_at']?.toString(),
+      updatedAt: json['updated_at']?.toString(),
       likesCount: json['likes_count'] is int
           ? json['likes_count'] as int
           : int.tryParse(json['likes_count']?.toString() ?? '0') ?? 0,
@@ -246,7 +242,7 @@ class PhotoModel {
   }
 
   PhotoModel copyWith({
-    int? idPhoto,
+    dynamic idPhoto,
     String? idUser,
     int? idCategory,
     String? categoryName,

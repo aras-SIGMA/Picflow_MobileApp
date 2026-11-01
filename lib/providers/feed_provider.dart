@@ -101,9 +101,11 @@ class FeedNotifier extends StateNotifier<FeedState> {
     fetchFeed();
   }
 
-  Future<void> toggleLike(int photoId) async {
+  Future<void> toggleLike(dynamic photoId) async {
     // 1. Optimistic local state update
-    final index = state.photos.indexWhere((p) => p.idPhoto == photoId);
+    final index = state.photos.indexWhere(
+      (p) => p.idPhoto.toString() == photoId.toString(),
+    );
     if (index == -1) return;
 
     final targetPhoto = state.photos[index];
@@ -130,7 +132,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
 
       final verifiedPhotos = List<PhotoModel>.from(state.photos);
       final verifiedIndex = verifiedPhotos.indexWhere(
-        (p) => p.idPhoto == photoId,
+        (p) => p.idPhoto.toString() == photoId.toString(),
       );
       if (verifiedIndex != -1) {
         verifiedPhotos[verifiedIndex] = verifiedPhotos[verifiedIndex].copyWith(
@@ -143,7 +145,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
       // Revert on error
       final revertedPhotos = List<PhotoModel>.from(state.photos);
       final revertIndex = revertedPhotos.indexWhere(
-        (p) => p.idPhoto == photoId,
+        (p) => p.idPhoto.toString() == photoId.toString(),
       );
       if (revertIndex != -1) {
         revertedPhotos[revertIndex] = targetPhoto.copyWith(
