@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../utils/app_colors.dart';
 import 'feed/feed_screen.dart';
-import 'home/home_screen.dart';
+import 'profile/profile_screen.dart';
 import 'upload/upload_photo_screen.dart';
 
 class MainNavigationShell extends StatefulWidget {
@@ -24,7 +24,13 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
         });
       },
     ),
-    const HomeScreen(),
+    ProfileScreen(
+      onNavigateToUpload: () {
+        setState(() {
+          _currentIndex = 1;
+        });
+      },
+    ),
   ];
 
   @override

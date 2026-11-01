@@ -8,8 +8,11 @@ import 'package:picflow_mobile/models/user_model.dart';
 import 'package:picflow_mobile/providers/auth_provider.dart';
 import 'package:picflow_mobile/providers/categories_provider.dart';
 import 'package:picflow_mobile/providers/feed_provider.dart';
+import 'package:picflow_mobile/providers/profile_provider.dart';
 import 'package:picflow_mobile/screens/photo_detail/photo_detail_screen.dart';
+import 'package:picflow_mobile/screens/profile/profile_screen.dart';
 import 'package:picflow_mobile/screens/upload/upload_photo_screen.dart';
+import 'package:picflow_mobile/widgets/edit_photo_sheet.dart';
 import 'package:picflow_mobile/widgets/exif_metadata_panel.dart';
 
 void main() {
@@ -290,6 +293,175 @@ void main() {
     expect(photo.iso, '50');
     expect(photo.cameraMake, 'TECNO');
   });
+
+  testWidgets(
+    'ProfileScreen renders creator info, aggregate counters, and portfolio grid',
+    (WidgetTester tester) async {
+      const mockUser = UserModel(
+        idUser: 'creator-99',
+        username: 'lensmaster',
+        email: 'lens@picflow.studio',
+        role: 'user',
+        bio: 'Landscape and street enthusiast.',
+      );
+
+      const mockPhoto = PhotoModel(
+        idPhoto: 'p1',
+        idUser: 'creator-99',
+        title: 'Morning Misty Mountain',
+        categoryName: 'Landscape',
+        imageUrl: 'https://example.com/mist.jpg',
+        thumbnailUrl: 'https://example.com/mist.jpg',
+        mediumUrl: 'https://example.com/mist.jpg',
+        highResUrl: 'https://example.com/mist.jpg',
+        likesCount: 15,
+        isOwner: true,
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authProvider.overrideWith(
+              (ref) => FakeAuthNotifier(
+                const AuthState(
+                  status: AuthStatus.authenticated,
+                  user: mockUser,
+                ),
+              ),
+            ),
+            profileProvider.overrideWith(
+              (ref) => FakeProfileNotifier(
+                const ProfileState(userPhotos: [mockPhoto]),
+              ),
+            ),
+          ],
+          child: const MaterialApp(home: ProfileScreen()),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Profil & Portofolio'), findsOneWidget);
+      expect(find.text('lensmaster'), findsOneWidget);
+      expect(find.text('PHOTOGRAPHER'), findsOneWidget);
+      expect(find.text('Landscape and street enthusiast.'), findsOneWidget);
+      expect(find.text('Karya Portofolio'), findsOneWidget);
+      expect(find.text('1 Foto'), findsOneWidget);
+      expect(find.text('Morning Misty Mountain'), findsOneWidget);
+    },
+  );
+
+  testWidgets('ProfileScreen shows logout confirmation dialog', (
+    WidgetTester tester,
+  ) async {
+    const mockUser = UserModel(
+      idUser: 'creator-99',
+      username: 'lensmaster',
+      email: 'lens@picflow.studio',
+      role: 'user',
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authProvider.overrideWith(
+            (ref) => FakeAuthNotifier(
+              const AuthState(status: AuthStatus.authenticated, user: mockUser),
+            ),
+          ),
+          profileProvider.overrideWith(
+            (ref) => FakeProfileNotifier(const ProfileState()),
+          ),
+        ],
+        child: const MaterialApp(home: ProfileScreen()),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // Tap logout icon in AppBar
+    await tester.tap(find.byIcon(Icons.logout_rounded));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Konfirmasi Keluar'), findsOneWidget);
+    expect(find.text('Batal'), findsOneWidget);
+    expect(find.text('Keluar'), findsOneWidget);
+  });
+
+  testWidgets(
+    'EditPhotoSheet renders metadata edit form with title, category, and story',
+    (WidgetTester tester) async {
+      const mockPhoto = PhotoModel(
+        idPhoto: 'p1',
+        idUser: 'u1',
+        title: 'Original Title',
+        description: 'Original Story',
+        idCategory: 1,
+        categoryName: 'Landscape',
+        imageUrl: 'https://example.com/p1.jpg',
+        thumbnailUrl: 'https://example.com/p1.jpg',
+        mediumUrl: 'https://example.com/p1.jpg',
+        highResUrl: 'https://example.com/p1.jpg',
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            categoriesProvider.overrideWith(
+              (ref) async => [
+                const CategoryModel(idCategory: 1, name: 'Landscape'),
+                const CategoryModel(idCategory: 2, name: 'Street'),
+              ],
+            ),
+            profileProvider.overrideWith(
+              (ref) => FakeProfileNotifier(const ProfileState()),
+            ),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(body: EditPhotoSheet(photo: mockPhoto)),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Edit Metadata Karya'), findsOneWidget);
+      expect(find.text('Judul Karya *'), findsOneWidget);
+      expect(find.text('Original Title'), findsOneWidget);
+      expect(find.text('Kategori Fotografi *'), findsOneWidget);
+      expect(find.text('Deskripsi & Cerita'), findsOneWidget);
+      expect(find.text('Original Story'), findsOneWidget);
+      expect(find.text('Simpan Perubahan'), findsOneWidget);
+    },
+  );
+}
+
+class FakeProfileNotifier extends StateNotifier<ProfileState>
+    implements ProfileNotifier {
+  FakeProfileNotifier(super.state);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+
+  @override
+  Future<void> fetchUserPhotos() async {}
+
+  @override
+  Future<bool> updatePhoto({
+    required dynamic photoId,
+    required String title,
+    required int categoryId,
+    String? description,
+  }) async => true;
+
+  @override
+  Future<bool> deletePhoto(dynamic photoId) async => true;
+
+  @override
+  void clearMessages() {}
 }
 
 class FakeAuthNotifier extends StateNotifier<AuthState>

@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../models/category_model.dart';
 import '../../providers/categories_provider.dart';
 import '../../providers/feed_provider.dart';
+import '../../providers/profile_provider.dart';
 import '../../providers/upload_provider.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_typography.dart';
@@ -143,8 +144,9 @@ class _UploadPhotoScreenState extends ConsumerState<UploadPhotoScreen> {
         ),
       );
 
-      // Invalidate & refresh feed so the new photo shows up immediately
+      // Invalidate & refresh feed and profile portfolio so the new photo shows up immediately
       ref.read(feedProvider.notifier).fetchFeed(isRefresh: true);
+      ref.read(profileProvider.notifier).fetchUserPhotos();
 
       // Trigger navigation callback if provided
       widget.onUploadSuccess?.call();

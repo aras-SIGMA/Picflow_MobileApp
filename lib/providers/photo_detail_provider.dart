@@ -31,7 +31,10 @@ class PhotoDetailState {
 }
 
 final photoDetailProvider = StateNotifierProvider.family
-    .autoDispose<PhotoDetailNotifier, PhotoDetailState, int>((ref, photoId) {
+    .autoDispose<PhotoDetailNotifier, PhotoDetailState, dynamic>((
+      ref,
+      photoId,
+    ) {
       final photoService = ref.watch(photoServiceProvider);
       return PhotoDetailNotifier(
         photoService: photoService,
@@ -42,7 +45,7 @@ final photoDetailProvider = StateNotifierProvider.family
 
 class PhotoDetailNotifier extends StateNotifier<PhotoDetailState> {
   final PhotoService photoService;
-  final int photoId;
+  final dynamic photoId;
   final Ref ref;
 
   PhotoDetailNotifier({
