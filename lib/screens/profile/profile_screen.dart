@@ -414,6 +414,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ? photo.thumbnailUrl
                         : photo.imageUrl,
                     fit: BoxFit.cover,
+                    memCacheWidth: 600,
                     placeholder: (context, url) => Container(
                       color: AppColors.surfaceSubtle,
                       child: const Center(

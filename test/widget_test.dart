@@ -12,6 +12,7 @@ import 'package:picflow_mobile/providers/profile_provider.dart';
 import 'package:picflow_mobile/screens/photo_detail/photo_detail_screen.dart';
 import 'package:picflow_mobile/screens/profile/profile_screen.dart';
 import 'package:picflow_mobile/screens/upload/upload_photo_screen.dart';
+import 'package:picflow_mobile/services/api_exception.dart';
 import 'package:picflow_mobile/widgets/edit_photo_sheet.dart';
 import 'package:picflow_mobile/widgets/exif_metadata_panel.dart';
 
@@ -293,6 +294,15 @@ void main() {
     expect(photo.iso, '50');
     expect(photo.cameraMake, 'TECNO');
   });
+
+  test(
+    'NetworkConnectionException provides clear adb reverse diagnostic advice',
+    () {
+      final ex = NetworkConnectionException('Connection refused');
+      expect(ex.message, contains('adb reverse tcp:8000 tcp:8000'));
+      expect(ex.statusCode, 0);
+    },
+  );
 
   testWidgets(
     'ProfileScreen renders creator info, aggregate counters, and portfolio grid',
